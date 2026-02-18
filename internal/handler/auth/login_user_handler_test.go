@@ -3,10 +3,10 @@ package handler
 import (
 	"bytes"
 	"database/sql"
-	"encoding/json"
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -98,7 +98,7 @@ func TestLoginUserHandlerSuccess(t *testing.T) {
 	repo.EXPECT().
 		FindByLogin(gomock.Any(), "test").
 		Return(model.User{
-			Id:        "u-1",
+			ID:        "u-1",
 			Login:     "test",
 			Password:  string(hash),
 			CreatedAt: time.Now(),
@@ -115,12 +115,8 @@ func TestLoginUserHandlerSuccess(t *testing.T) {
 		t.Fatalf("status mismatch: got %d, want %d", rec.Code, http.StatusOK)
 	}
 
-	var response LoginUserResponse
-	if err := json.Unmarshal(rec.Body.Bytes(), &response); err != nil {
-		t.Fatalf("failed to parse response body: %v", err)
-	}
-
-	if response.Token == "" {
-		t.Fatal("expected non-empty token")
+	authHeader := rec.Header().Get("Authorization")
+	if !strings.HasPrefix(authHeader, "Bearer ") || strings.TrimPrefix(authHeader, "Bearer ") == "" {
+		t.Fatalf("expected Authorization Bearer token, got %q", authHeader)
 	}
 }

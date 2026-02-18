@@ -25,7 +25,7 @@ func (s *UserRepository) Create(ctx context.Context, login string, hashedPasswor
 		`INSERT INTO users (id, login, password) VALUES ($1, $2, $3) RETURNING id, login, password, created_at`,
 		uuid.NewString(),
 		login,
-		hashedPassword).Scan(&user.Id, &user.Login, &user.Password, &user.CreatedAt)
+		hashedPassword).Scan(&user.ID, &user.Login, &user.Password, &user.CreatedAt)
 
 	if err != nil {
 		s.logger.Errorf("failed to insert user: %v", err)
@@ -39,7 +39,7 @@ func (s *UserRepository) FindByLogin(ctx context.Context, login string) (model.U
 	var user model.User
 	row := s.db.QueryRowContext(ctx, "SELECT id, login, password, created_at FROM users WHERE login = $1", login)
 
-	err := row.Scan(&user.Id, &user.Login, &user.Password, &user.CreatedAt)
+	err := row.Scan(&user.ID, &user.Login, &user.Password, &user.CreatedAt)
 	if err != nil {
 		s.logger.Errorf("failed to find user: %v", err)
 		return model.User{}, err

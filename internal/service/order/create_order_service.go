@@ -25,13 +25,13 @@ func NewCreateOrderService(orderRepository repository.OrderRepository, logger *l
 }
 
 func (s *CreateOrderService) Create(ctx context.Context, userID, orderID string) (string, error) {
-	orderUuid, err := s.repository.Create(ctx, userID, orderID)
+	orderUUID, err := s.repository.Create(ctx, userID, orderID)
 	if err != nil {
 		s.logger.Errorf("create order: %v", err)
 		return "", err
 	}
 
-	return orderUuid, nil
+	return orderUUID, nil
 }
 
 func (s *CreateOrderService) FindByOrderID(ctx context.Context, orderID string) (model.Order, error) {

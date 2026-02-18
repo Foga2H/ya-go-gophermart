@@ -19,7 +19,7 @@ func NewOrderRepository(db *sql.DB, logger *logger.Logger) *OrderRepository {
 }
 
 func (o *OrderRepository) Create(ctx context.Context, userID string, orderID string) (string, error) {
-	var orderUuid string
+	var orderUUID string
 	err := o.db.QueryRowContext(
 		ctx,
 		"INSERT INTO orders (id, user_id, number, sum, status) VALUES ($1, $2, $3, $4, $5) RETURNING id",
@@ -28,13 +28,13 @@ func (o *OrderRepository) Create(ctx context.Context, userID string, orderID str
 		orderID,
 		0,
 		model.OrderStatusNew,
-	).Scan(&orderUuid)
+	).Scan(&orderUUID)
 
 	if err != nil {
 		return "", err
 	}
 
-	return orderUuid, nil
+	return orderUUID, nil
 }
 
 func (o *OrderRepository) FindByOrderID(ctx context.Context, orderID string) (model.Order, error) {
@@ -43,7 +43,7 @@ func (o *OrderRepository) FindByOrderID(ctx context.Context, orderID string) (mo
 		ctx,
 		"SELECT id, user_id, number, sum, status, uploaded_at, updated_at FROM orders WHERE number = $1",
 		orderID,
-	).Scan(&order.Id, &order.UserId, &order.Number, &order.Sum, &order.Status, &order.UploadedAt, &order.UpdatedAt)
+	).Scan(&order.ID, &order.UserID, &order.Number, &order.Sum, &order.Status, &order.UploadedAt, &order.UpdatedAt)
 
 	if err != nil {
 		return model.Order{}, err
@@ -69,12 +69,17 @@ func (o *OrderRepository) FindByUserID(ctx context.Context, userID string) ([]mo
 
 	for rows.Next() {
 		var order model.Order
-		err := rows.Scan(&order.Id, &order.UserId, &order.Number, &order.Sum, &order.Status, &order.UploadedAt, &order.UpdatedAt)
+		err := rows.Scan(&order.ID, &order.UserID, &order.Number, &order.Sum, &order.Status, &order.UploadedAt, &order.UpdatedAt)
 		if err != nil {
 			o.logger.Errorf("Error scanning row: %s", err)
 			return []model.Order{}, err
 		}
 		orders = append(orders, order)
+	}
+
+	if err = rows.Err(); err != nil {
+		o.logger.Errorf("Error iterating rows: %s", err)
+		return []model.Order{}, err
 	}
 
 	return orders, nil

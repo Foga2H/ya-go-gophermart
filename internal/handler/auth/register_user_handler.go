@@ -50,8 +50,8 @@ func (h *RegisterUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		}
 	}
 
-	if user.Id != "" {
-		h.logger.Errorf("user with id %s already exists", user.Id)
+	if user.ID != "" {
+		h.logger.Errorf("user with id %s already exists", user.ID)
 		http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
 		return
 	}
@@ -63,7 +63,7 @@ func (h *RegisterUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	token, err := h.token.GenerateToken(user.Id)
+	token, err := h.token.GenerateToken(user.ID)
 	if err != nil {
 		h.logger.Errorf("generate token error: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

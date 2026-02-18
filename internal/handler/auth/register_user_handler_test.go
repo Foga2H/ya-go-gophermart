@@ -9,6 +9,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/Foga2H/ya-go-gophermart/internal/auth"
 	"github.com/Foga2H/ya-go-gophermart/internal/logger"
 	"github.com/Foga2H/ya-go-gophermart/internal/model"
 	repositorymock "github.com/Foga2H/ya-go-gophermart/internal/repository/mock"
@@ -21,7 +22,8 @@ func TestRegisterUserHandlerInvalidJSON(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	h := NewRegisterUserHandler(repositorymock.NewMockUserRepository(ctrl), logger.NewNopLogger())
+	testLogger := logger.NewNopLogger()
+	h := NewRegisterUserHandler(repositorymock.NewMockUserRepository(ctrl), auth.NewToken("secret", testLogger), testLogger)
 	req := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewBufferString("{"))
 	rec := httptest.NewRecorder()
 
@@ -42,13 +44,14 @@ func TestRegisterUserHandlerUserAlreadyExists(t *testing.T) {
 	repo.EXPECT().
 		FindByLogin(gomock.Any(), "taken").
 		Return(model.User{
-			Id:        "u-1",
+			ID:        "u-1",
 			Login:     "taken",
 			Password:  "hash",
 			CreatedAt: time.Now(),
 		}, nil)
 
-	h := NewRegisterUserHandler(repo, logger.NewNopLogger())
+	testLogger := logger.NewNopLogger()
+	h := NewRegisterUserHandler(repo, auth.NewToken("secret", testLogger), testLogger)
 	req := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewBufferString(`{"login":"taken","password":"pass"}`))
 	rec := httptest.NewRecorder()
 
@@ -70,7 +73,8 @@ func TestRegisterUserHandlerFindByLoginFailure(t *testing.T) {
 		FindByLogin(gomock.Any(), "new").
 		Return(model.User{}, errors.New("db failure"))
 
-	h := NewRegisterUserHandler(repo, logger.NewNopLogger())
+	testLogger := logger.NewNopLogger()
+	h := NewRegisterUserHandler(repo, auth.NewToken("secret", testLogger), testLogger)
 	req := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewBufferString(`{"login":"new","password":"pass"}`))
 	rec := httptest.NewRecorder()
 
@@ -95,7 +99,8 @@ func TestRegisterUserHandlerCreateFailure(t *testing.T) {
 		Create(gomock.Any(), "new", gomock.Any()).
 		Return(model.User{}, errors.New("insert failure"))
 
-	h := NewRegisterUserHandler(repo, logger.NewNopLogger())
+	testLogger := logger.NewNopLogger()
+	h := NewRegisterUserHandler(repo, auth.NewToken("secret", testLogger), testLogger)
 	req := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewBufferString(`{"login":"new","password":"pass"}`))
 	rec := httptest.NewRecorder()
 
@@ -119,13 +124,14 @@ func TestRegisterUserHandlerCreateSuccess(t *testing.T) {
 	repo.EXPECT().
 		Create(gomock.Any(), "new", gomock.Any()).
 		Return(model.User{
-			Id:        "u-2",
+			ID:        "u-2",
 			Login:     "new",
 			Password:  "hashed-password",
 			CreatedAt: time.Now(),
 		}, nil)
 
-	h := NewRegisterUserHandler(repo, logger.NewNopLogger())
+	testLogger := logger.NewNopLogger()
+	h := NewRegisterUserHandler(repo, auth.NewToken("secret", testLogger), testLogger)
 	req := httptest.NewRequest(http.MethodPost, "/api/user/register", bytes.NewBufferString(`{"login":"new","password":"pass"}`))
 	rec := httptest.NewRecorder()
 

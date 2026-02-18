@@ -24,8 +24,8 @@ func main() {
 	newLogger := logger.NewLogger()
 
 	newConfig := mainConfig.NewConfig()
-	newDbConfig := dbConfig.NewConfig()
-	dbConnect := db.NewDatabaseConnection(newDbConfig)
+	newDBConfig := dbConfig.NewConfig()
+	dbConnect := db.NewDatabaseConnection(newDBConfig)
 
 	dbConnection, err := dbConnect.Ping()
 	if err != nil {

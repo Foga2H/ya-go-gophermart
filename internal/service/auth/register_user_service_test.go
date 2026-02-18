@@ -40,7 +40,7 @@ func TestRegisterUserServiceCreateSuccess(t *testing.T) {
 			}
 
 			return model.User{
-				Id:        "u-1",
+				ID:        "u-1",
 				Login:     gotLogin,
 				Password:  gotHashedPassword,
 				CreatedAt: time.Now(),
@@ -54,7 +54,7 @@ func TestRegisterUserServiceCreateSuccess(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if user.Id == "" {
+	if user.ID == "" {
 		t.Fatal("expected created user id")
 	}
 }
@@ -123,7 +123,7 @@ func TestRegisterUserServiceFindByLoginSuccess(t *testing.T) {
 	defer ctrl.Finish()
 
 	want := model.User{
-		Id:        "u-42",
+		ID:        "u-42",
 		Login:     "login",
 		Password:  "hash",
 		CreatedAt: time.Now(),
@@ -141,7 +141,7 @@ func TestRegisterUserServiceFindByLoginSuccess(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if got.Id != want.Id || got.Login != want.Login || got.Password != want.Password {
+	if got.ID != want.ID || got.Login != want.Login || got.Password != want.Password {
 		t.Fatalf("user mismatch: got %+v, want %+v", got, want)
 	}
 }

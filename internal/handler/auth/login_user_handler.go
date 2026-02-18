@@ -55,7 +55,7 @@ func (h *LoginUserHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	token, err := h.token.GenerateToken(user.Id)
+	token, err := h.token.GenerateToken(user.ID)
 	if err != nil {
 		h.logger.Errorf("generate token error: %v", err)
 		http.Error(w, http.StatusText(http.StatusInternalServerError), http.StatusInternalServerError)

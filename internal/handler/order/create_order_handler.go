@@ -58,13 +58,13 @@ func (h *CreateOrderHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	if orderFound.Id != "" && orderFound.UserId != userID {
+	if orderFound.ID != "" && orderFound.UserID != userID {
 		h.logger.Errorf("order was created by different user: %q", orderNumber)
 		http.Error(w, http.StatusText(http.StatusConflict), http.StatusConflict)
 		return
 	}
 
-	if orderFound.UserId == userID {
+	if orderFound.UserID == userID {
 		w.WriteHeader(http.StatusOK)
 		return
 	}

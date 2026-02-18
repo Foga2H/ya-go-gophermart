@@ -12,8 +12,8 @@ const (
 )
 
 type Order struct {
-	Id         string      `json:"id" db:"id"`
-	UserId     string      `json:"user_id" db:"user_id"`
+	ID         string      `json:"id" db:"id"`
+	UserID     string      `json:"user_id" db:"user_id"`
 	Number     string      `json:"number" db:"number"`
 	Sum        float32     `json:"sum" db:"sum"`
 	Status     OrderStatus `json:"status" db:"status"`

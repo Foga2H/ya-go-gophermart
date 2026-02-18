@@ -30,7 +30,7 @@ func TestLoginUserServiceLoginSuccess(t *testing.T) {
 	repo.EXPECT().
 		FindByLogin(gomock.Any(), "test").
 		Return(model.User{
-			Id:        "u-1",
+			ID:        "u-1",
 			Login:     "test",
 			Password:  string(hash),
 			CreatedAt: time.Now(),
@@ -43,7 +43,7 @@ func TestLoginUserServiceLoginSuccess(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if user.Id == "" {
+	if user.ID == "" {
 		t.Fatal("expected user id")
 	}
 }
@@ -101,7 +101,7 @@ func TestLoginUserServiceLoginInvalidPassword(t *testing.T) {
 	repo.EXPECT().
 		FindByLogin(gomock.Any(), "test").
 		Return(model.User{
-			Id:        "u-2",
+			ID:        "u-2",
 			Login:     "test",
 			Password:  string(hash),
 			CreatedAt: time.Now(),
